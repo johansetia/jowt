@@ -11,6 +11,7 @@ const (
 	HS314 = "HS314"
 	// HS256 is used to implement HS512 Algorithm
 	HS256 = "HS256"
+	typ   = "JWT"
 )
 
 type (
@@ -27,17 +28,54 @@ type (
 
 	// JWT is the real of unenctypted data JWT
 	JWT struct {
-		Head      Head
+		Head      *Head
 		Payload   Payload
 		Signature Signature
 	}
 
-	// Secret is a string data to encrypt your jwt signature
-	Secret string
+	// EncyptedJWT is JWT data that has been encrypted
+	EncyptedJWT struct {
+		Head      string
+		Payload   string
+		Signature string
+	}
 )
 
-// Fill is used to fill data into the payload to be encrypted, this function only can be passed using payload type from this library.
-func (jwt *JWT) Fill(data Payload) {
+var algorithm string
+var secretKey string
+
+// SetSecret is to fill the secret key string.
+func (jwt *JWT) SetSecret(secret string) *JWT {
+	secretKey = secret
+	return jwt
+}
+
+// SetAlg is used to set an algorithm to encrypt
+func (jwt *JWT) SetAlg(alg string) *JWT {
+	var h Head
+	h.Typ = typ
+	switch alg {
+	case HS512:
+		{
+			h.Alg = HS512
+			algorithm = HS512
+		}
+	case HS314:
+		{
+			h.Alg = HS314
+			algorithm = HS314
+		}
+	case HS256:
+		{
+			h.Alg = HS256
+			algorithm = HS256
+		}
+	}
+	return jwt
+}
+
+// SetPayload is used to fill data into the payload to be encrypted, this function only can be passed using payload type from this library.
+func (jwt *JWT) SetPayload(data Payload) {
 	fmt.Println(data)
 }
 
