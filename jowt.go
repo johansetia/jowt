@@ -1,5 +1,18 @@
 package jowt
 
+import (
+	"fmt"
+)
+
+const (
+	// HS512 is used to implement HS512 Algorithm
+	HS512 = "HS512"
+	// HS314 is used to implement HS512 Algorithm
+	HS314 = "HS314"
+	// HS256 is used to implement HS512 Algorithm
+	HS256 = "HS256"
+)
+
 type (
 	// Head is a JWT Header
 	Head struct {
@@ -18,17 +31,14 @@ type (
 		Payload   Payload
 		Signature Signature
 	}
+
+	// Secret is a string data to encrypt your jwt signature
+	Secret string
 )
 
-const secretKey = "CONFIDENTAL_SECRET_KEY"
-
-func main() {
-
-}
-
-// Fill is used to fill data into the payload to be encrypted.
+// Fill is used to fill data into the payload to be encrypted, this function only can be passed using payload type from this library.
 func (jwt *JWT) Fill(data Payload) {
-
+	fmt.Println(data)
 }
 
 // Generate is used to make a JWT token.
