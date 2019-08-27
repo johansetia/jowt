@@ -44,6 +44,11 @@ type (
 var algorithm string
 var secretKey string
 
+// Make is used to start make an easy JWT Token
+func Make() *JWT {
+	return &JWT{}
+}
+
 // SetSecret is to fill the secret key string.
 func (jwt *JWT) SetSecret(secret string) *JWT {
 	secretKey = secret
