@@ -1,7 +1,9 @@
 package jowt
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 )
 
 const (
@@ -45,18 +47,7 @@ var algorithm string
 var secretKey string
 
 // Make is used to start make an easy JWT Token
-func Make() *JWT {
-	return &JWT{}
-}
-
-// SetSecret is to fill the secret key string.
-func (jwt *JWT) SetSecret(secret string) *JWT {
-	secretKey = secret
-	return jwt
-}
-
-// SetAlg is used to set an algorithm to encrypt
-func (jwt *JWT) SetAlg(alg string) *JWT {
+func Make(alg string) *JWT {
 	var h Head
 	h.Typ = typ
 	switch alg {
@@ -75,7 +66,19 @@ func (jwt *JWT) SetAlg(alg string) *JWT {
 			h.Alg = HS256
 			algorithm = HS256
 		}
+	default:
+		{
+			panic("ERROR ALG NOT ALLOWED")
+			os.Exit(71)
+		}
 	}
+	return &JWT{}
+}
+
+// SetSecret is to fill the secret key string.
+func (jwt *JWT) SetSecret(secret string) *JWT {
+
+	secretKey = secret
 	return jwt
 }
 
@@ -84,9 +87,13 @@ func (jwt *JWT) SetPayload(data Payload) {
 	fmt.Println(data)
 }
 
-// Generate is used to make a JWT token.
-func (jwt *JWT) Generate() {
-
+// Get is used to make a JWT token.
+func (jwt *JWT) Get() string {
+	data, err := json.Marshal(jwt.Head)
+	if err != nil {
+		panic("ERRRR")
+	}
+	return string(data)
 }
 
 // Verify is used to verify your last JWT token from secret key.
