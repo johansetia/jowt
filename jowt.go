@@ -10,9 +10,12 @@ import (
 )
 
 const (
-	HS512alg string = "HS512" // HS512alg is used to implement HS512 Algorithm
-	HS256alg string = "HS256" // HS256alg is used to implement HS512 Algorithm
-	typeJWT         = "JWT"   // typeJWT is for fill the typ in header data
+	// HS512alg is used to implement HS512 Algorithm
+	HS512alg string = "HS512"
+	// HS256alg is used to implement HS512 Algorithm
+	HS256alg string = "HS256"
+	// typeJWT is for fill the typ in header data
+	typeJWT = "JWT"
 )
 
 type (
