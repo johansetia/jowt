@@ -25,7 +25,7 @@ you can use a structure from this package to create payload data.
 ```go
 key := "qwertyuiopasdfghjklzxcvbnm123456"
 data := jowt.Payload{
-		"iss": "johan.com",
+	"iss": "johan.com",
         "iat": 1566959060,
         "exp": 1598495060,
         "aud": "www.johan.com",
