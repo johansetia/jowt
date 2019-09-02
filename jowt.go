@@ -6,6 +6,7 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"encoding/json"
+	"net/http"
 	"strings"
 )
 
@@ -34,12 +35,32 @@ type (
 	// VerifyToken struct is used to store header and payload data that has been given from Verify function.
 	VerifyToken struct {
 		head
+		Payload
 		encHeader    string
 		encPayload   string
 		encSignature string
 		secretKey    string
 	}
+
+	// Security is used to store JWT to be encrypted.
+	Security struct {
+		SecretKey         string
+		WhiteListURI      []string
+		BlackListURI      []string
+		Message           interface{}
+		MiddlewarePayload map[string]interface{}
+	}
 )
+
+// middlewarePayload :
+var middlewarePayload map[string]interface{}
+
+// SetPayloadFromMiddleware :
+func (s *Security) SetPayloadFromMiddleware(DecrypedPayload Payload) {
+	var stepOne map[string]interface{}
+	stepOne = DecrypedPayload
+	s.MiddlewarePayload = stepOne
+}
 
 // HS512 is used to start make an easy HS512 JWT Token
 func HS512(secret string) *JWT {
@@ -104,11 +125,12 @@ func Verify(secret string) *VerifyToken {
 func (verif *VerifyToken) SetToken(token string) *VerifyToken {
 	split := strings.Split(token, ".")
 	if len(split) != 3 {
-		panic("ERROR INVALID TOKEN")
+		return verif
 	}
 	header := decode(split[0])
-
+	payload := decode(split[1])
 	json.Unmarshal([]byte(header), &verif.head)
+	json.Unmarshal([]byte(payload), &verif.Payload)
 	verif.encHeader = split[0]
 	verif.encPayload = split[1]
 	verif.encSignature = split[2]
@@ -117,6 +139,9 @@ func (verif *VerifyToken) SetToken(token string) *VerifyToken {
 
 // Status function is used to get a status from JWT Token is original or fake.
 func (verif *VerifyToken) Status() bool {
+	if (verif.encHeader == "") || (verif.encPayload == "") || (verif.encSignature == "") || (verif.secretKey == "") {
+		return false
+	}
 	token := string(verif.encHeader + "." + verif.encPayload)
 	generatedToken := encrypt(verif.head.Alg, verif.secretKey, token)
 	decodedSignature := decode(verif.encSignature)
@@ -143,9 +168,9 @@ func encrypt(alg, secret, token string) []byte {
 }
 
 func encode(d string) string {
-	encoded := base64.URLEncoding.EncodeToString([]byte(d))
+	ceking := base64.URLEncoding.EncodeToString([]byte(d))
 	r := strings.NewReplacer("+", "", "/", "")
-	result := r.Replace(encoded)
+	result := r.Replace(ceking)
 	return strings.TrimRight(result, "=")
 }
 
@@ -158,4 +183,10 @@ func decode(d string) string {
 	}
 	decoded, _ := base64.URLEncoding.DecodeString(result)
 	return string(decoded)
+}
+
+// JWTMiddleware is implemented from middleware. this function are implemented with http.Handle param and it will return http.Handler
+func (s *Security) JWTMiddleware(next http.Handler) http.Handler {
+	// Importing from Middleware Package
+	return Jwt(s, next)
 }
