@@ -81,12 +81,16 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImpvaGFuQGV4YW1wbGUuY29tIiwiVXN
 ├── example
 │   ├── go.mod
 │   ├── go.sum
-│   └── main.go
+│   ├── main.go
+│   └── README.md
 ├── go.mod
+├── helper
+│   └── helper.go
 ├── jowt.go
 ├── LICENSE
-└── README.md
+├── README.md
+└── security.go
 
-1 directory, 7 files
+2 directories, 10 files
 ```
 
